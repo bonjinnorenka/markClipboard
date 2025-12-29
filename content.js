@@ -10,6 +10,10 @@ const turndownService = new TurndownService({
     hr: '---'
 });
 
+// GFMプラグインを使用（テーブル、取り消し線、タスクリスト等をサポート）
+// turndownPluginGfmはturndown-plugin-gfm.jsがグローバルに提供
+turndownService.use(turndownPluginGfm.gfm);
+
 // 通知を表示する関数
 function showNotification(message, isSuccess = true) {
     const notification = document.createElement('div');
