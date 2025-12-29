@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "markClipboard",
+    "version": "1.0.0",
+    "description": "右クリックメニューからWebページをMarkdownに変換してクリップボードにコピー",
+    "permissions": [
+        "contextMenus",
+        "activeTab",
+        "clipboardWrite",
+        "scripting"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "lib/turndown.js",
+                "content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "icons": {
+        "16": "icons/icon16.svg",
+        "48": "icons/icon48.svg",
+        "128": "icons/icon128.svg"
+    }
+}

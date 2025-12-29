@@ -1,0 +1,11 @@
+{
+    "name": "mark-clipboard",
+    "version": "1.0.0",
+    "description": "右クリックメニューからWebページをMarkdownに変換してクリップボードにコピーするブラウザ拡張機能",
+    "scripts": {
+        "setup": "node scripts/setup.js"
+    },
+    "dependencies": {
+        "turndown": "^7.2.0"
+    }
+}
