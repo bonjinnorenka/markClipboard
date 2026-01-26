@@ -7,6 +7,7 @@
     },
     "dependencies": {
         "turndown": "^7.2.0",
-        "joplin-turndown-plugin-gfm": "^1.0.12"
+        "joplin-turndown-plugin-gfm": "^1.0.12",
+        "@mozilla/readability": "^0.5.0"
     }
 }

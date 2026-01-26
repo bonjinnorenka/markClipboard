@@ -19,3 +19,9 @@ const gfmSrc = path.join(__dirname, '../node_modules/joplin-turndown-plugin-gfm/
 const gfmDest = path.join(libDir, 'turndown-plugin-gfm.js');
 fs.copyFileSync(gfmSrc, gfmDest);
 console.log('turndown-plugin-gfm.js をコピーしました');
+
+// Readability.jsをコピー
+const readabilitySrc = path.join(__dirname, '../node_modules/@mozilla/readability/Readability.js');
+const readabilityDest = path.join(libDir, 'Readability.js');
+fs.copyFileSync(readabilitySrc, readabilityDest);
+console.log('Readability.js をコピーしました');

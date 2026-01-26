@@ -92,6 +92,48 @@ function convertToMarkdown(hasSelection) {
     return markdown;
 }
 
+// Readabilityを使用して本文のみをMarkdownに変換する関数
+function convertToMarkdownWithReadability(hasSelection) {
+    const title = document.title;
+    const url = window.location.href;
+    let html;
+
+    if (hasSelection) {
+        // 選択範囲がある場合はその部分のみ変換
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const container = document.createElement('div');
+            container.appendChild(range.cloneContents());
+            html = container.innerHTML;
+        }
+    } else {
+        // Readabilityを使用して本文を抽出
+        const documentClone = document.cloneNode(true);
+        const reader = new Readability(documentClone);
+        const article = reader.parse();
+
+        if (article && article.content) {
+            html = article.content;
+        } else {
+            // Readabilityで抽出できなかった場合はフォールバック
+            const clone = document.body.cloneNode(true);
+            const elementsToRemove = clone.querySelectorAll('script, style, noscript, iframe, svg, nav, footer, header');
+            elementsToRemove.forEach(el => el.remove());
+            html = clone.innerHTML;
+        }
+    }
+
+    // Markdownに変換
+    let markdown = turndownService.turndown(html);
+
+    // メタ情報を先頭に追加
+    const header = `# ${title}\n\n> Source: ${url}\n\n---\n\n`;
+    markdown = header + markdown;
+
+    return markdown;
+}
+
 // クリップボードにコピーする関数
 async function copyToClipboard(text) {
     try {
@@ -111,6 +153,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         copyToClipboard(markdown).then(success => {
             if (success) {
                 showNotification('✓ Markdownをクリップボードにコピーしました');
+            } else {
+                showNotification('✕ コピーに失敗しました', false);
+            }
+        });
+    } else if (message.action === 'convertToMarkdownReadability') {
+        const markdown = convertToMarkdownWithReadability(message.hasSelection);
+
+        copyToClipboard(markdown).then(success => {
+            if (success) {
+                showNotification('✓ 本文をMarkdownでクリップボードにコピーしました');
             } else {
                 showNotification('✕ コピーに失敗しました', false);
             }

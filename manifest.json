@@ -34,6 +34,7 @@
             "js": [
                 "lib/turndown.js",
                 "lib/turndown-plugin-gfm.js",
+                "lib/Readability.js",
                 "content.js"
             ],
             "run_at": "document_idle"
