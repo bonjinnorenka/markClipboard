@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "description": "右クリックメニューからWebページをMarkdownに変換してクリップボードにコピーするブラウザ拡張機能",
     "scripts": {
-        "setup": "node scripts/setup.js"
+        "setup": "node scripts/setup.js",
+        "test": "node --test"
     },
     "dependencies": {
         "turndown": "^7.2.0",
