@@ -136,12 +136,48 @@ function convertToMarkdownWithReadability(hasSelection) {
 
 // クリップボードにコピーする関数
 async function copyToClipboard(text) {
+    // navigator.clipboard is unavailable in Firefox content scripts on HTTP pages.
+    if (typeof navigator.clipboard?.writeText === 'function') {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (err) {
+            console.warn('Clipboard API failed, trying legacy copy:', err);
+        }
+    }
+
+    // clipboardWrite permission allows this fallback even on insecure HTTP pages.
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.cssText = 'position:fixed;left:-9999px;top:0';
+
+    const previousFocus = document.activeElement;
+    const selection = window.getSelection();
+    const ranges = selection
+        ? Array.from({ length: selection.rangeCount }, (_, i) => selection.getRangeAt(i).cloneRange())
+        : [];
+
     try {
-        await navigator.clipboard.writeText(text);
-        return true;
+        document.body.appendChild(textarea);
+        textarea.focus({ preventScroll: true });
+        textarea.select();
+        return document.execCommand('copy');
     } catch (err) {
         console.error('クリップボードへのコピーに失敗:', err);
         return false;
+    } finally {
+        textarea.remove();
+        // Keep the page's original focus/selection after copying.
+        try {
+            previousFocus?.focus?.({ preventScroll: true });
+            if (selection) {
+                selection.removeAllRanges();
+                ranges.forEach(range => selection.addRange(range));
+            }
+        } catch (err) {
+            console.warn('コピー後の選択範囲を復元できませんでした:', err);
+        }
     }
 }
 
